@@ -1,16 +1,18 @@
 from app import db
+from datetime import datetime
 
 class ProjectsModel(db.Model):
     __tablename__ = 'projects'
     id = db.Column(db.Integer, primary_key=True)
     projectTitle =db.Column(db.String(45), nullable= False)
     description = db.Column(db.String(120), nullable=False)
-    dateCreated = db.Column(db.String(45), nullable=False)
+    dateCreated = db.Column(db.String(45), default=datetime.now())
     cost = db.Column(db.Integer, nullable=False)
     timeframe = db.Column(db.String(45), nullable=False)
     # 0 = imcomplete & 1 = complete
-    status = db.Column(db.String, default=0 )   
+    status = db.Column(db.String, default='Incomplete')   
     workers  = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
     # Create
@@ -21,8 +23,8 @@ class ProjectsModel(db.Model):
 
     # fetch records
     @classmethod
-    def fetch_records(cls):
-        records = ProjectsModel.query.all()
+    def fetch_records(cls,id):
+        records = ProjectsModel.query.filter_by(user_id=id).all()
         return records
 
     # update record

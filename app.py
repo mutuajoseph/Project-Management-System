@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from flask_bcrypt import Bcrypt
 import datetime
+import pygal
 
 
 DB_URL = 'postgresql://postgres:wamzy@127.0.0.1:5432/pmsystem'
@@ -52,81 +53,104 @@ def login():
             if UserModel.check_password(email, password):
                 session['logged_in'] = True
                 session['username'] = UserModel.fetch_by_email(email).username
+                session['id'] = UserModel.fetch_by_email(email).id
                 return redirect(url_for('home'))
             else:
                 flash('Wrong login credentials','danger')
                 return redirect(url_for('login'))
         else:
-            print('Email does not exist', 'danger')
-
+            flash('Email does not exist', 'danger')
     return render_template('login.html')
    
 
 @app.route('/')
 @login_required
 def home():
+    if session:
+        
+        username = session['username']
+        uid = session['id']
+        # print(uid)
 
-    projects = ProjectsModel.fetch_records()
+        projects = ProjectsModel.fetch_records(uid)
+        users = UserModel.fetch_records()
+
+        status = [x.status for x in projects]
+        print(status)
+        pie_chart = pygal.Pie()
+        pie_chart.title = 'Incomplete projects vs Complete projects'
+        pie_chart.add('ProjectModel',status.count('Complete'))
+        pie_chart.add('ProjectModel',status.count('Incomplete'))
+        graph = pie_chart.render_data_uri()
 
     
-    
-    return render_template('index.html', proj=len(projects))
+        return render_template('index.html', proj=len(projects), user=len(users),graph=graph)
+    else:
+        flash("Unauthorised Access", "danger")
+        return redirect(url_for('login'))
 
 @app.route('/users', methods=['GET','POST'])
 def users():
-     
-    # Fetch all records in users
-    users = UserModel.fetch_records()
+    if session:
+        # Fetch all records in users
+        users = UserModel.fetch_records()
 
-    # Fetch all inputs from users
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
+        # Fetch all inputs from users
+        if request.method == 'POST':
+            username = request.form['username']
+            email = request.form['email']
+            password = request.form['password']
 
-        if UserModel.check_email_exist(email):
-            flash('Email exist','danger')
-            return redirect(request.url)
-        else:
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            if UserModel.check_email_exist(email):
+                flash('Email exist','danger')
+                return redirect(request.url)
+            else:
+                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-            user = UserModel(username=username, email=email, password=hashed_password)
-            user.create_task()
-        flash('User Successfully Added')
-        return redirect(url_for('users'))
+                user = UserModel(username=username, email=email, password=hashed_password)
+                user.create_task()
+            flash('User Successfully Added')
+            return redirect(url_for('users'))
 
-    return render_template('users.html', users=users)
+        return render_template('users.html', users=users)
+    else:
+        flash('Unauthorised Access', 'danger')
+        return redirect(url_for('login'))
   
 
 @app.route('/projects', methods=['GET','POST'])
 @login_required
 def projects():
+    if session: 
 
-    # Fetch all records in projects
-    projects = ProjectsModel.fetch_records()
-    # workers = ProjectsModel.
-    print(type(projects))
+        username = session['username']
+        uid = session['id']
+        # Fetch all records in projects
+        projects = ProjectsModel.fetch_records(uid)
+        # workers = ProjectsModel.
+        print(type(projects))
+        
+
+        # Fetching all inputs from projects
     
-
-    # Fetching all inputs from projects
-   
-    if request.method == 'POST':
-        projectTitle = request.form['projectTitle']
-        description = request.form['description']
-        dateCreated = request.form['dateCreated']
-        cost = request.form['cost']
-        timeframe = request.form['timeframe']
-        status = request.form['status']
-        workers = request.form['workers']
+        if request.method == 'POST':
+            projectTitle = request.form['projectTitle']
+            description = request.form['description']
+            cost = request.form['cost']
+            timeframe = request.form['timeframe']
+            workers = request.form['workers']
 
 
-        project = ProjectsModel(projectTitle=projectTitle, description=description, dateCreated=dateCreated, cost=cost, timeframe=timeframe,
-                            status=status, workers=workers)
+            project = ProjectsModel(projectTitle=projectTitle, description=description, cost=cost, timeframe=timeframe,
+                                 workers=workers, user_id=uid)
 
-        project.create_task()
-        return redirect(url_for('projects'))
+            project.create_task()
+            return redirect(url_for('projects'))
 
-    return render_template('projects.html', projects=projects)
+        return render_template('projects.html', projects=projects)
+    else:
+        flash('Unauthorized Access', 'danger')
+        return redirect(url_for('login'))
 
 # edit a task
 @app.route('/project/update/<int:id>', methods=['POST'])

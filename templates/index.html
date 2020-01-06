@@ -129,18 +129,20 @@
               <div class="col-sm-6">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Projects</h5>
-                
-                    <p class="card-text">{{ proj }}</p>
-                  
+                    <h4 class="card-title text-center">Projects</h5>
+                    <a>
+                      <h3 class="card-text text-center">{{ proj }}</h3>
+                    </a>
                   </div>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Workers</h4>
-                    <p class="card-text">{{ workers_count }}</p>
+                    <h4 class="card-title">Users</h4>
+                    <a>
+                      <h3 class="card-text text-center">{{ user }}</h3>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -149,11 +151,16 @@
         <br>
         <div class="container-fluid">
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-8">
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">A graphical reprsentation of the incomplete and complete projects </h4>
-                  <p>.....</p>
+                  <p><!-- Don't forget the "|safe"! -->
+                    <div class="rounded mx-auto d-block" alt="Responsive Image">
+                    <div id="chart">
+                       <embed type="image/svg+xml" src= {{ graph|safe }} />
+                    </div></p>
+                    </div>
                 </div>
               </div>
             </div>

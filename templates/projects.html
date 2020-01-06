@@ -86,14 +86,26 @@
             <i class="fa fa-bars"></i>
           </button>
 
+            <div class="navbar-wrapper">
+              <div class="collapse navbar-collapse justify-content-lg-end" id="navigation">
+               <ul class="navbar-nav">
+                 <li class="nav-item">
+                   <a>
+                     <i class="fas fa-user"></i>
+                     <p>{{session.username}} </p>
+                   </a>
+                 </li>
+               </ul>
+     
+              </div>
+            </div>
 
-          <!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
-
-           
-
-       
-          </ul>
+            <div class="collapse navbar-collapse justify-content-end" id="navigation1"
+              <ul class="navbar-nav">
+                <a href="/logout" class="nav-link">
+                <i class="fas fa-sign-out-alt">Sign out</i>
+                </a>
+              </ul>   
 
         </nav>
         <!-- End of Topbar -->
@@ -136,20 +148,12 @@
                           <input type="text" class="form-control" name="description" id="exampleInputEmail1" aria-describedby="emailHelp">
                         </div>
                         <div class="form-group">
-                          <label for="exampleInputEmail1">Date Created</label>
-                          <input type="date" class="form-control" name="dateCreated" id="exampleInputEmail1" aria-describedby="emailHelp">
-                        </div>
-                        <div class="form-group">
                           <label for="exampleInputEmail1">Cost</label>
                           <input type="number" class="form-control" name="cost" id="exampleInputEmail1" aria-describedby="emailHelp">
                         </div>
                         <div class="form-group">
                           <label for="exampleInputEmail1">Timeframe</label>
                           <input type="text" class="form-control" name="timeframe" id="exampleInputEmail1" aria-describedby="emailHelp">
-                        </div>
-                        <div class="form-group">
-                          <label for="exampleInputEmail1">Status</label>
-                          <input type="text" class="form-control" name="status" id="exampleInputEmail1" aria-describedby="emailHelp">
                         </div>
                         <div class="form-group">
                           <label for="exampleInputEmail1">Workers</label>
@@ -223,9 +227,13 @@
                                           <label>Timeframe</label>
                                           <input type="text" name="newTimeframe" value="{{ project.timeframe }}" class="form-control"  placeholder="">
                                       </div>
-                                      <div class="form-group">
+                                      <div class="dropdown">
                                         <label>Status</label>
                                         <input type="text" name="newStatus" value="{{ project.status}}" class="form-control"  placeholder="">
+                                        <div class="dropdown-menu">
+                                          <a class="dropdown-item" >Complete</a>
+                                          <a class="dropdown-item" >Incomplete</a>>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                       <label>Workers</label>
