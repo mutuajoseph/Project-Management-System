@@ -7,9 +7,11 @@ import pygal
 
 
 DB_URL = 'postgresql://postgres:wamzy@127.0.0.1:5432/pmsystem'
+DB_URL_PRODUCTION ='postgres://xfdzbmxontsqnb:aa88dca22664f8a7e68124b65e4b98bd481ed2af9e88a09b85677a66d7ac232c@ec2-54-217-221-21.eu-west-1.compute.amazonaws.com:5432/d1esbj9c2tsod4'
+
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL_PRODUCTION
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'some_secret_key'
 db = SQLAlchemy(app)

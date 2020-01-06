@@ -1,4 +1,4 @@
-from app import db,bcrypt
+from main import db,bcrypt
 # from werkzeug.security  import check_password_hash
 
 class UserModel(db.Model):
