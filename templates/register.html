@@ -19,16 +19,11 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="text-center">Admin login</h1>
-          <h3 class="text-center">Welcome to Mazuri PMS</h3>
-          <p align="center">
-            <font color="red" font-family="sans-serif"
-              >Only Authorized Access</font
-            >
-          </p>
+          <h1 class="text-center">Sign Up</h1>
+          <h4 class="text-center">Welcome to Mazuri PMS</h4>
         </div>
         <dv class="modal-body">
-          <form action="/login" method="post">
+          <form action="/register" method="post">
             <div class="form-group">
               {% with messages = get_flashed_messages(with_categories = true) %}
               {% if messages %} {% for category, message in messages %}
@@ -37,6 +32,16 @@
               </div>
               {% endfor %} {% endif %} {% endwith %}
             </div>
+
+            <div class="form-group">
+              <input
+                type="text"
+                name="username"
+                class="form-control input-lg"
+                placeholder="Username"
+              />
+            </div>
+
             <div class="form-group">
               <input
                 type="text"
@@ -59,11 +64,8 @@
               <input
                 type="submit"
                 class="btn btn-block btn-lg btn-primary"
-                value="Login"
+                value="Sign Up"
               />
-            </div>
-            <div class="text-center font-weight-bold">
-                <a href="/register">Sign Up</a>
             </div>
           </form>
         </div>

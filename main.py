@@ -11,7 +11,7 @@ DB_URL_PRODUCTION ='postgres://xfdzbmxontsqnb:aa88dca22664f8a7e68124b65e4b98bd48
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL_PRODUCTION
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'some_secret_key'
 db = SQLAlchemy(app)
@@ -41,6 +41,27 @@ def login_required(f):
     return wrap
 
 
+@app.route('/register', methods=['GET','POST'])
+def register():
+
+     # Fetch all inputs from users
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+
+        if UserModel.check_email_exist(email):
+            flash('Email already exists','danger')
+            return redirect(url_for('register'))
+        else:
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+            user = UserModel(username=username, email=email, password=hashed_password)
+            user.create_task()
+            flash('User Successfully Added', 'success')
+            return redirect(url_for('login'))
+
+    return render_template('register.html')
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -58,7 +79,7 @@ def login():
                 session['id'] = UserModel.fetch_by_email(email).id
                 return redirect(url_for('home'))
             else:
-                flash('Wrong login credentials','danger')
+                flash('Wrong login credentials!   Please Try Again!!','danger')
                 return redirect(url_for('login'))
         else:
             flash('Email does not exist', 'danger')
@@ -93,31 +114,12 @@ def home():
 
 @app.route('/users', methods=['GET','POST'])
 def users():
-    if session:
-        # Fetch all records in users
-        users = UserModel.fetch_records()
+    
+    # Fetch all records in users
+    users = UserModel.fetch_records()
 
-        # Fetch all inputs from users
-        if request.method == 'POST':
-            username = request.form['username']
-            email = request.form['email']
-            password = request.form['password']
+    return render_template('users.html', users=users)
 
-            if UserModel.check_email_exist(email):
-                flash('Email exist','danger')
-                return redirect(request.url)
-            else:
-                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-                user = UserModel(username=username, email=email, password=hashed_password)
-                user.create_task()
-            flash('User Successfully Added')
-            return redirect(url_for('users'))
-
-        return render_template('users.html', users=users)
-    else:
-        flash('Unauthorised Access', 'danger')
-        return redirect(url_for('login'))
   
 
 @app.route('/projects', methods=['GET','POST'])
